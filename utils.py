@@ -173,7 +173,7 @@ class AverageMeter:
 
 class EarlyStopping:
     """Early stopping to stop training when validation loss doesn't improve"""
-    def __init__(self, patience: int = 7, min_delta: float = 0, mode: str = 'min'):
+    def __init__(self, patience: int = 3, min_delta: float = 0, mode: str = 'min'):
         self.patience = patience
         self.min_delta = min_delta
         self.mode = mode
