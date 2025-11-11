@@ -1,0 +1,56 @@
+# Example configuration file for CSR training
+# Save as config.yaml and use: python train.py --config config.yaml
+
+# Dataset configuration
+dataset:
+  name: "tbx11k"  # Options: tbx11k, vindrcxr, isic
+  data_root: "./data/images"
+  train_file: "./data/train_annotations.json"
+  val_file: "./data/val_annotations.json"
+  test_file: "./data/test_annotations.json"
+  input_size: 224
+
+# Model configuration
+model:
+  backbone: "resnet50"  # Options: resnet50, resnet34, convnextv2_base
+  num_prototypes_per_concept: 10
+  proj_dim: 128
+  pretrained: true
+
+# Training configuration
+training:
+  batch_size: 32
+  num_workers: 4
+  device: "cuda"
+  save_dir: "checkpoints/tbx11k"
+  
+  # Stage A: Concept model
+  stage_a:
+    epochs: 30
+    lr: 0.0001  # Learning rate for concept head
+    backbone_lr: 0.00001  # Learning rate for backbone
+    
+  # Stage B: Prototype learning
+  stage_b:
+    epochs: 20
+    lr: 0.001
+    lambda_temp: 20.0  # Temperature for contrastive loss
+    gamma: 20.0  # Temperature for soft assignment
+    margin: 0.05  # Margin for positive concept
+    
+  # Stage C: Task head
+  stage_c:
+    epochs: 30
+    lr: 0.0001
+    backbone_lr: 0.00001
+    finetune_all: true  # Fine-tune entire model
+
+# Evaluation configuration
+evaluation:
+  output_dir: "results"
+  rejection_rates: [0.1, 0.2, 0.3]
+
+# Doctor-in-the-loop configuration
+interaction:
+  alpha: 0.2  # Suppression factor for negative regions
+  top_k_concepts: 10  # Number of top concepts to show
