@@ -170,6 +170,8 @@ def convert_tbx11k_to_csr_format(
     annotations = {}
     
     for img_path in tqdm(image_files, desc=f"Processing {split_name}"):
+        # Keep the relative path (e.g., 'sick/s4387.png')
+        img_path = img_path.strip()
         img_name = os.path.basename(img_path)
         xml_path = os.path.join(anno_dir, img_name.replace('.png', '.xml'))
         
@@ -195,8 +197,8 @@ def convert_tbx11k_to_csr_format(
             else:
                 disease = 'tuberculosis'  # Generic TB
         
-        # Create annotation entry
-        annotations[img_name] = {
+        # Create annotation entry - use full relative path as key
+        annotations[img_path] = {
             'findings': [k for k, v in concepts.items() if v == 1],
             'disease': disease
         }
@@ -251,6 +253,8 @@ def create_csv_format(
     data = []
     
     for img_path in tqdm(image_files, desc=f"Processing {split_name}"):
+        # Keep the relative path (e.g., 'sick/s4387.png')
+        img_path = img_path.strip()
         img_name = os.path.basename(img_path)
         xml_path = os.path.join(anno_dir, img_name.replace('.png', '.xml'))
         
@@ -273,8 +277,8 @@ def create_csv_format(
             else:
                 disease = 'tuberculosis'
         
-        # Create row
-        row = {'image_path': img_name}
+        # Create row - use full relative path
+        row = {'image_path': img_path}
         for concept in concept_columns:
             row[concept] = concepts[concept]
         row['disease'] = disease
