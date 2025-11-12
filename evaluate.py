@@ -125,7 +125,7 @@ class CSREvaluator:
                 
                 # Sigmoid for multi-label
                 concept_probs = torch.sigmoid(concept_logits)
-                concept_preds = (concept_probs > 0.5).float()
+                concept_preds = (concept_probs > 0.3).float()
                 
                 all_preds.append(concept_preds.cpu().numpy())
                 all_labels.append(concept_labels.cpu().numpy())
