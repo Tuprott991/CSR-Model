@@ -19,6 +19,55 @@ from dataloader import create_dataloaders
 from losses import MultiPrototypeContrastiveLoss
 
 
+class EarlyStopping:
+    """
+    Early stopping to stop training when validation metric stops improving
+    """
+    def __init__(self, patience: int = 10, min_delta: float = 0.0, mode: str = 'min'):
+        """
+        Args:
+            patience: Number of epochs to wait before stopping
+            min_delta: Minimum change to qualify as improvement
+            mode: 'min' for loss (lower is better), 'max' for accuracy (higher is better)
+        """
+        self.patience = patience
+        self.min_delta = min_delta
+        self.mode = mode
+        self.counter = 0
+        self.best_score = None
+        self.early_stop = False
+        
+    def __call__(self, score: float) -> bool:
+        """
+        Check if training should stop
+        
+        Args:
+            score: Current validation metric (loss or accuracy)
+            
+        Returns:
+            True if should stop, False otherwise
+        """
+        if self.best_score is None:
+            self.best_score = score
+            return False
+        
+        if self.mode == 'min':
+            improved = score < (self.best_score - self.min_delta)
+        else:  # mode == 'max'
+            improved = score > (self.best_score + self.min_delta)
+        
+        if improved:
+            self.best_score = score
+            self.counter = 0
+        else:
+            self.counter += 1
+            if self.counter >= self.patience:
+                self.early_stop = True
+                return True
+        
+        return False
+
+
 class CSRTrainer:
     """
     Trainer for CSR model implementing all 3 stages
@@ -29,7 +78,10 @@ class CSRTrainer:
         train_loader: DataLoader,
         val_loader: DataLoader,
         device: str = 'cuda',
-        save_dir: str = 'checkpoints'
+        save_dir: str = 'checkpoints',
+        early_stopping: bool = False,
+        patience: int = 10,
+        min_delta: float = 0.001
     ):
         self.model = model.to(device)
         self.train_loader = train_loader
@@ -37,6 +89,9 @@ class CSRTrainer:
         self.device = device
         self.save_dir = Path(save_dir)
         self.save_dir.mkdir(exist_ok=True, parents=True)
+        self.use_early_stopping = early_stopping
+        self.patience = patience
+        self.min_delta = min_delta
         
     def train_stage_a(
         self,
