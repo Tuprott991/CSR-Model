@@ -1,0 +1,452 @@
+{
+  "task_performance": {
+    "accuracy": 0.9736590038314177,
+    "precision": 0.9587923526105555,
+    "recall": 0.9736590038314177,
+    "f1_score": 0.9659040106118904,
+    "roc_auc": 0.9873257165987556,
+    "confusion_matrix": [
+      [
+        150,
+        0,
+        14
+      ],
+      [
+        33,
+        0,
+        3
+      ],
+      [
+        5,
+        0,
+        1883
+      ]
+    ],
+    "per_class_precision": [
+      0.7978723404255319,
+      0.0,
+      0.9910526315789474
+    ],
+    "per_class_recall": [
+      0.9146341463414634,
+      0.0,
+      0.9973516949152542
+    ],
+    "per_class_f1": [
+      0.8522727272727273,
+      0.0,
+      0.9941921858500528
+    ]
+  },
+  "concept_performance": {
+    "overall_accuracy": 0.956143951833607,
+    "overall_precision": 1.0,
+    "overall_recall": 0.2057001239157373,
+    "overall_f1": 0.34121274409044194,
+    "per_concept": [
+      {
+        "concept_id": 0,
+        "concept_name": "has_active_tb",
+        "accuracy": 0.921455938697318,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      {
+        "concept_id": 1,
+        "concept_name": "has_latent_tb",
+        "accuracy": 0.9794061302681992,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      {
+        "concept_id": 2,
+        "concept_name": "has_tb_lesion",
+        "accuracy": 0.9444444444444444,
+        "precision": 1.0,
+        "recall": 0.42,
+        "f1_score": 0.5915492957746479
+      },
+      {
+        "concept_id": 3,
+        "concept_name": "lesion_count_low",
+        "accuracy": 0.9075670498084292,
+        "precision": 1.0,
+        "recall": 0.005154639175257732,
+        "f1_score": 0.010256410256410256
+      },
+      {
+        "concept_id": 4,
+        "concept_name": "lesion_count_medium",
+        "accuracy": 0.9971264367816092,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      {
+        "concept_id": 5,
+        "concept_name": "lesion_size_large",
+        "accuracy": 0.9434865900383141,
+        "precision": 1.0,
+        "recall": 0.40703517587939697,
+        "f1_score": 0.5785714285714286
+      },
+      {
+        "concept_id": 6,
+        "concept_name": "lesion_size_medium",
+        "accuracy": 0.9995210727969349,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      }
+    ]
+  },
+  "prototype_analysis": {
+    "total_samples": 2088,
+    "prototype_usage": [
+      {
+        "concept_id": 0,
+        "concept_name": "has_active_tb",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.005268199233716475
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.09818007662835249
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.017241379310344827
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.29118773946360155
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.010057471264367816
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.3807471264367816
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.0019157088122605363
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.19540229885057472
+          }
+        ]
+      },
+      {
+        "concept_id": 1,
+        "concept_name": "has_latent_tb",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.034482758620689655
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.09291187739463602
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.10009578544061302
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.009578544061302681
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.41379310344827586
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.12260536398467432
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.0004789272030651341
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.0004789272030651341
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.22557471264367815
+          }
+        ]
+      },
+      {
+        "concept_id": 2,
+        "concept_name": "has_tb_lesion",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.0004789272030651341
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.12164750957854406
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.033524904214559385
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.01532567049808429
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.0009578544061302681
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.04741379310344827
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.0038314176245210726
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.7768199233716475
+          }
+        ]
+      },
+      {
+        "concept_id": 3,
+        "concept_name": "lesion_count_low",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.9061302681992337
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.09339080459770115
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.0004789272030651341
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.0
+          }
+        ]
+      },
+      {
+        "concept_id": 4,
+        "concept_name": "lesion_count_medium",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.11206896551724138
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.03879310344827586
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.0014367816091954023
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.0004789272030651341
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.0023946360153256703
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.020593869731800767
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.07758620689655173
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.6489463601532567
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.09770114942528736
+          }
+        ]
+      },
+      {
+        "concept_id": 5,
+        "concept_name": "lesion_size_large",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.01053639846743295
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.09626436781609195
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.0014367816091954023
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.7873563218390804
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.10440613026819924
+          }
+        ]
+      },
+      {
+        "concept_id": 6,
+        "concept_name": "lesion_size_medium",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.9157088122605364
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.06657088122605365
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.009099616858237548
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.008620689655172414
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.0
+          }
+        ]
+      }
+    ]
+  },
+  "rejection_robustness": {
+    "rejection_10pct": {
+      "accuracy": 0.9736590038314177,
+      "precision": 0.9587923526105555,
+      "recall": 0.9736590038314177,
+      "f1_score": 0.9659040106118904
+    },
+    "rejection_20pct": {
+      "accuracy": 0.9741379310344828,
+      "precision": 0.9593482449159666,
+      "recall": 0.9741379310344828,
+      "f1_score": 0.9663967663238909
+    },
+    "rejection_30pct": {
+      "accuracy": 0.9267241379310345,
+      "precision": 0.9377980558605824,
+      "recall": 0.9267241379310345,
+      "f1_score": 0.9280663145247083
+    }
+  }
+}
