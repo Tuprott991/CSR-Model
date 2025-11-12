@@ -120,7 +120,12 @@ class CSRTrainer:
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, epochs)
         
         best_val_loss = float('inf')
-        
+        # Early stopping for Stage A (monitor val_loss: lower is better)
+        if self.use_early_stopping:
+            es = EarlyStopping(patience=self.patience, min_delta=self.min_delta, mode='min')
+        else:
+            es = None
+
         for epoch in range(epochs):
             # Training
             self.model.train()
@@ -159,11 +164,16 @@ class CSRTrainer:
             # Save best model
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
-                self.save_checkpoint('stage_a_best.pth', stage='a')
+                self.save_checkpoint('stage_a_best.pth', stage='a', epoch=epoch+1, val_loss=val_loss)
                 print(f"Saved best model (val_loss: {val_loss:.4f})")
+
+            # Early stopping check
+            if es is not None and es(val_loss):
+                print(f"Early stopping triggered after epoch {epoch+1} (no improvement in val_loss for {self.patience} epochs)")
+                break
         
         # Save final model
-        self.save_checkpoint('stage_a_final.pth', stage='a')
+        self.save_checkpoint('stage_a_final.pth', stage='a', epoch=epoch+1, val_loss=best_val_loss)
         
         return {'train_loss': train_loss, 'val_loss': val_loss}
     
@@ -182,7 +192,11 @@ class CSRTrainer:
                 concept_logits = outputs['concept_logits']
                 
                 loss = criterion(concept_logits, concept_labels)
-                val_loss += loss.item()
+                # loss may be a tensor or a float depending on implementation
+                if isinstance(loss, torch.Tensor):
+                    val_loss += loss.item()
+                else:
+                    val_loss += float(loss)
         
         return val_loss / len(self.val_loader)
     
@@ -266,7 +280,12 @@ class CSRTrainer:
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, epochs)
         
         best_val_loss = float('inf')
-        
+        # Early stopping for Stage B (monitor val_loss: lower is better)
+        if self.use_early_stopping:
+            es = EarlyStopping(patience=self.patience, min_delta=self.min_delta, mode='min')
+        else:
+            es = None
+
         for epoch in range(epochs):
             # Training
             self.model.train()
@@ -311,11 +330,16 @@ class CSRTrainer:
             # Save best model
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
-                self.save_checkpoint('stage_b_best.pth', stage='b')
+                self.save_checkpoint('stage_b_best.pth', stage='b', epoch=epoch+1, val_loss=val_loss)
                 print(f"Saved best model (val_loss: {val_loss:.4f})")
+
+            # Early stopping
+            if es is not None and es(val_loss):
+                print(f"Early stopping triggered after epoch {epoch+1} (no improvement in val_loss for {self.patience} epochs)")
+                break
         
         # Save final model
-        self.save_checkpoint('stage_b_final.pth', stage='b')
+        self.save_checkpoint('stage_b_final.pth', stage='b', epoch=epoch+1, val_loss=best_val_loss)
         
         # Unfreeze for stage C
         for param in self.model.feature_extractor.parameters():
@@ -340,7 +364,11 @@ class CSRTrainer:
                 prototypes = self.model.prototypes()
                 
                 loss = criterion(v_proj, concept_labels, prototypes)
-                val_loss += loss.item()
+                # some loss implementations may return a float
+                if isinstance(loss, torch.Tensor):
+                    val_loss += loss.item()
+                else:
+                    val_loss += float(loss)
         
         return val_loss / len(self.val_loader)
     
@@ -380,7 +408,12 @@ class CSRTrainer:
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, epochs)
         
         best_val_acc = 0.0
-        
+        # Early stopping for Stage C (monitor val_acc: higher is better)
+        if self.use_early_stopping:
+            es = EarlyStopping(patience=self.patience, min_delta=self.min_delta, mode='max')
+        else:
+            es = None
+
         for epoch in range(epochs):
             # Training
             self.model.train()
@@ -436,11 +469,16 @@ class CSRTrainer:
             # Save best model
             if val_acc > best_val_acc:
                 best_val_acc = val_acc
-                self.save_checkpoint('stage_c_best.pth', stage='c')
+                self.save_checkpoint('stage_c_best.pth', stage='c', epoch=epoch+1, val_loss=val_loss, val_acc=val_acc)
                 print(f"Saved best model (val_acc: {val_acc:.2f}%)")
+
+            # Early stopping (monitor val_acc)
+            if es is not None and es(val_acc):
+                print(f"Early stopping triggered after epoch {epoch+1} (no improvement in val_acc for {self.patience} epochs)")
+                break
         
         # Save final model
-        self.save_checkpoint('stage_c_final.pth', stage='c')
+        self.save_checkpoint('stage_c_final.pth', stage='c', epoch=epoch+1, val_loss=val_loss, val_acc=val_acc)
         
         return {'train_loss': train_loss, 'train_acc': train_acc, 
                 'val_loss': val_loss, 'val_acc': val_acc}
@@ -462,7 +500,10 @@ class CSRTrainer:
                 task_logits = outputs['task_logits']
                 
                 loss = criterion(task_logits, class_labels)
-                val_loss += loss.item()
+                if isinstance(loss, torch.Tensor):
+                    val_loss += loss.item()
+                else:
+                    val_loss += float(loss)
                 
                 _, predicted = task_logits.max(1)
                 total += class_labels.size(0)
@@ -473,12 +514,27 @@ class CSRTrainer:
         
         return val_loss, val_acc
     
-    def save_checkpoint(self, filename: str, stage: str):
-        """Save model checkpoint"""
+    def save_checkpoint(self, filename: str, stage: str, epoch: int = None, val_loss: float = None, val_acc: float = None):
+        """Save model checkpoint
+
+        Args:
+            filename: checkpoint filename to write into save_dir
+            stage: 'a'|'b'|'c'
+            epoch: optional epoch number
+            val_loss: optional validation loss to record
+            val_acc: optional validation accuracy to record
+        """
         checkpoint = {
             'model_state_dict': self.model.state_dict(),
             'stage': stage
         }
+        if epoch is not None:
+            checkpoint['epoch'] = int(epoch)
+        if val_loss is not None:
+            checkpoint['val_loss'] = float(val_loss)
+        if val_acc is not None:
+            checkpoint['val_acc'] = float(val_acc)
+
         torch.save(checkpoint, self.save_dir / filename)
     
     def load_checkpoint(self, filename: str):
