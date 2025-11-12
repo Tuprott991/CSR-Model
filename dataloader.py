@@ -5,7 +5,7 @@ Findings = concepts, Diseases = target classes
 """
 
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
 from torchvision import transforms
 from PIL import Image
 import pandas as pd
@@ -266,7 +266,8 @@ def create_dataloaders(
     test_file: str,
     batch_size: int = 32,
     num_workers: int = 4,
-    input_size: int = 224
+    input_size: int = 224,
+    use_weighted_sampling: bool = False
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """
     Create train, validation, and test dataloaders
@@ -280,6 +281,7 @@ def create_dataloaders(
         batch_size: Batch size
         num_workers: Number of data loading workers
         input_size: Image input size
+        use_weighted_sampling: Whether to use weighted random sampling for class balance
         
     Returns:
         train_loader, val_loader, test_loader
@@ -324,11 +326,38 @@ def create_dataloaders(
     else:
         raise ValueError(f"Unknown dataset: {dataset_name}")
     
+    # Create weighted sampler for training if requested
+    train_sampler = None
+    shuffle_train = True
+    
+    if use_weighted_sampling:
+        # Calculate class weights
+        class_labels = [train_dataset[i]['class_label'].item() for i in range(len(train_dataset))]
+        class_counts = torch.bincount(torch.tensor(class_labels))
+        
+        # Weight = 1 / class_count
+        class_weights = 1.0 / class_counts.float()
+        
+        # Assign weight to each sample based on its class
+        sample_weights = torch.tensor([class_weights[label] for label in class_labels])
+        
+        train_sampler = WeightedRandomSampler(
+            weights=sample_weights,
+            num_samples=len(sample_weights),
+            replacement=True
+        )
+        shuffle_train = False  # Don't shuffle when using sampler
+        
+        print(f"Using weighted sampling for training:")
+        print(f"  Class counts: {class_counts.tolist()}")
+        print(f"  Class weights: {class_weights.tolist()}")
+    
     # Create dataloaders
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
-        shuffle=True,
+        shuffle=shuffle_train,
+        sampler=train_sampler,
         num_workers=num_workers,
         pin_memory=True
     )

@@ -838,7 +838,7 @@ class CSREvaluator:
         report = {}
         
         # Task performance
-        print("\n[1/4] Evaluating task performance...")
+        print("\n[1/7] Evaluating task performance...")
         task_metrics = self.evaluate_task_performance()
         report['task_performance'] = task_metrics
         
@@ -851,7 +851,7 @@ class CSREvaluator:
             print(f"  ROC-AUC:   {task_metrics['roc_auc']:.4f}")
         
         # Concept performance
-        print("\n[2/4] Evaluating concept performance...")
+        print("\n[2/7] Evaluating concept performance...")
         concept_metrics = self.evaluate_concept_performance()
         report['concept_performance'] = concept_metrics
         
@@ -862,7 +862,7 @@ class CSREvaluator:
         print(f"  F1 Score:  {concept_metrics['overall_f1']:.4f}")
         
         # Prototype usage
-        print("\n[3/4] Analyzing prototype usage...")
+        print("\n[3/7] Analyzing prototype usage...")
         prototype_analysis = self.analyze_prototype_usage()
         report['prototype_analysis'] = prototype_analysis
         

@@ -1,0 +1,563 @@
+{
+  "task_performance": {
+    "accuracy": 0.9315134099616859,
+    "precision": 0.969965348673205,
+    "recall": 0.9315134099616859,
+    "f1_score": 0.9294115113779197,
+    "roc_auc": 0.9931823700843412,
+    "confusion_matrix": [
+      [
+        29,
+        126,
+        9
+      ],
+      [
+        2,
+        33,
+        1
+      ],
+      [
+        3,
+        2,
+        1883
+      ]
+    ],
+    "per_class_precision": [
+      0.8529411764705882,
+      0.20496894409937888,
+      0.9947173798203909
+    ],
+    "per_class_recall": [
+      0.17682926829268292,
+      0.9166666666666666,
+      0.9973516949152542
+    ],
+    "per_class_f1": [
+      0.29292929292929293,
+      0.3350253807106599,
+      0.9960327955567311
+    ]
+  },
+  "concept_performance": {
+    "overall_accuracy": 0.988232074438971,
+    "overall_precision": 0.9139504563233377,
+    "overall_recall": 0.8686493184634448,
+    "overall_f1": 0.8907242693773825,
+    "per_concept": [
+      {
+        "concept_id": 0,
+        "concept_name": "has_active_tb",
+        "accuracy": 0.9746168582375478,
+        "precision": 0.7967914438502673,
+        "recall": 0.9085365853658537,
+        "f1_score": 0.8490028490028491
+      },
+      {
+        "concept_id": 1,
+        "concept_name": "has_latent_tb",
+        "accuracy": 0.9779693486590039,
+        "precision": 0.38461538461538464,
+        "recall": 0.11627906976744186,
+        "f1_score": 0.17857142857142858
+      },
+      {
+        "concept_id": 2,
+        "concept_name": "has_tb_lesion",
+        "accuracy": 0.9909003831417624,
+        "precision": 0.9738219895287958,
+        "recall": 0.93,
+        "f1_score": 0.9514066496163683
+      },
+      {
+        "concept_id": 3,
+        "concept_name": "lesion_count_low",
+        "accuracy": 0.9880268199233716,
+        "precision": 0.9470899470899471,
+        "recall": 0.9226804123711341,
+        "f1_score": 0.9347258485639687
+      },
+      {
+        "concept_id": 4,
+        "concept_name": "lesion_count_medium",
+        "accuracy": 0.9971264367816092,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      },
+      {
+        "concept_id": 5,
+        "concept_name": "lesion_size_large",
+        "accuracy": 0.9894636015325671,
+        "precision": 0.9732620320855615,
+        "recall": 0.914572864321608,
+        "f1_score": 0.9430051813471503
+      },
+      {
+        "concept_id": 6,
+        "concept_name": "lesion_size_medium",
+        "accuracy": 0.9995210727969349,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0
+      }
+    ]
+  },
+  "prototype_analysis": {
+    "total_samples": 2088,
+    "prototype_usage": [
+      {
+        "concept_id": 0,
+        "concept_name": "has_active_tb",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.08189655172413793
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.04741379310344827
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.06082375478927203
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.017241379310344827
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.017720306513409962
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.022988505747126436
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.03735632183908046
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.034961685823754786
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.10584291187739464
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.5737547892720306
+          }
+        ]
+      },
+      {
+        "concept_id": 1,
+        "concept_name": "has_latent_tb",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.005268199233716475
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.0004789272030651341
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.0028735632183908046
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.003352490421455939
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.9880268199233716
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.0
+          }
+        ]
+      },
+      {
+        "concept_id": 2,
+        "concept_name": "has_tb_lesion",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.0004789272030651341
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.09243295019157088
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.907088122605364
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.0
+          }
+        ]
+      },
+      {
+        "concept_id": 3,
+        "concept_name": "lesion_count_low",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.1700191570881226
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.11494252873563218
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.11206896551724138
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.2940613026819923
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.0603448275862069
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.11781609195402298
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.04118773946360153
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.01867816091954023
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.034003831417624523
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.036877394636015325
+          }
+        ]
+      },
+      {
+        "concept_id": 4,
+        "concept_name": "lesion_count_medium",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.08524904214559387
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.0004789272030651341
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.0004789272030651341
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.9137931034482759
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.0
+          }
+        ]
+      },
+      {
+        "concept_id": 5,
+        "concept_name": "lesion_size_large",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.005747126436781609
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.08093869731800767
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.05890804597701149
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.06130268199233716
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.006226053639846743
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.05028735632183908
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.2940613026819923
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.2471264367816092
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.040229885057471264
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.15517241379310345
+          }
+        ]
+      },
+      {
+        "concept_id": 6,
+        "concept_name": "lesion_size_medium",
+        "prototypes": [
+          {
+            "prototype_id": 0,
+            "usage_frequency": 0.0023946360153256703
+          },
+          {
+            "prototype_id": 1,
+            "usage_frequency": 0.9976053639846744
+          },
+          {
+            "prototype_id": 2,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 3,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 4,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 5,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 6,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 7,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 8,
+            "usage_frequency": 0.0
+          },
+          {
+            "prototype_id": 9,
+            "usage_frequency": 0.0
+          }
+        ]
+      }
+    ]
+  },
+  "rejection_robustness": {
+    "rejection_10pct": {
+      "accuracy": 0.9315134099616859,
+      "precision": 0.969965348673205,
+      "recall": 0.9315134099616859,
+      "f1_score": 0.9294115113779197
+    },
+    "rejection_20pct": {
+      "accuracy": 0.9334291187739464,
+      "precision": 0.9634601757111589,
+      "recall": 0.9334291187739464,
+      "f1_score": 0.9341898432146044
+    },
+    "rejection_30pct": {
+      "accuracy": 0.9248084291187739,
+      "precision": 0.9572288080930532,
+      "recall": 0.9248084291187739,
+      "f1_score": 0.9209418957061962
+    }
+  },
+  "misclassification_analysis": {
+    "total_misclassified": 143,
+    "misclassification_patterns": {
+      "latent_tuberculosis_to_normal": {
+        "count": 1,
+        "top_missing_concepts": [
+          {
+            "concept_id": 1,
+            "concept_name": "has_latent_tb",
+            "frequency": 1
+          },
+          {
+            "concept_id": 2,
+            "concept_name": "has_tb_lesion",
+            "frequency": 1
+          },
+          {
+            "concept_id": 3,
+            "concept_name": "lesion_count_low",
+            "frequency": 1
+          }
+        ]
+      },
+      "active_tuberculosis_to_latent_tuberculosis": {
+        "count": 126,
+        "top_missing_concepts": [
+          {
+            "concept_id": 0,
+            "concept_name": "has_active_tb",
+            "frequency": 8
+          },
+          {
+            "concept_id": 3,
+            "concept_name": "lesion_count_low",
+            "frequency": 6
+          },
+          {
+            "concept_id": 5,
+            "concept_name": "lesion_size_large",
+            "frequency": 6
+          }
+        ]
+      },
+      "active_tuberculosis_to_normal": {
+        "count": 9,
+        "top_missing_concepts": [
+          {
+            "concept_id": 0,
+            "concept_name": "has_active_tb",
+            "frequency": 9
+          },
+          {
+            "concept_id": 2,
+            "concept_name": "has_tb_lesion",
+            "frequency": 9
+          },
+          {
+            "concept_id": 3,
+            "concept_name": "lesion_count_low",
+            "frequency": 9
+          }
+        ]
+      },
+      "latent_tuberculosis_to_active_tuberculosis": {
+        "count": 2,
+        "top_missing_concepts": [
+          {
+            "concept_id": 1,
+            "concept_name": "has_latent_tb",
+            "frequency": 2
+          },
+          {
+            "concept_id": 2,
+            "concept_name": "has_tb_lesion",
+            "frequency": 1
+          },
+          {
+            "concept_id": 3,
+            "concept_name": "lesion_count_low",
+            "frequency": 1
+          }
+        ]
+      },
+      "normal_to_active_tuberculosis": {
+        "count": 3
+      },
+      "normal_to_latent_tuberculosis": {
+        "count": 2
+      }
+    },
+    "concept_analysis": {}
+  },
+  "calibration": {
+    "expected_calibration_error": 0.15859555384711999,
+    "maximum_calibration_error": 0.2785208655728234,
+    "calibration_curve": {
+      "fraction_of_positives": [
+        0.6666666666666666,
+        0.3021978021978022,
+        0.5714285714285714,
+        0.9947089947089947
+      ],
+      "mean_predicted_value": [
+        0.3881458010938432,
+        0.43021480395243716,
+        0.548324968133654,
+        0.7899682499428905
+      ]
+    },
+    "interpretation": "Poor"
+  }
+}

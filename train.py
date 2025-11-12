@@ -16,7 +16,13 @@ from typing import Dict, List, Tuple
 
 from model import CSRModel
 from dataloader import create_dataloaders
-from losses import MultiPrototypeContrastiveLoss
+from losses import (
+    MultiPrototypeContrastiveLoss, 
+    FocalBCELoss, 
+    ClassBalancedCrossEntropyLoss,
+    PrototypeDiversityLoss,
+    PrototypeUsageBalancingLoss
+)
 
 
 class EarlyStopping:
@@ -81,7 +87,15 @@ class CSRTrainer:
         save_dir: str = 'checkpoints',
         early_stopping: bool = False,
         patience: int = 10,
-        min_delta: float = 0.001
+        min_delta: float = 0.001,
+        use_focal_loss: bool = False,
+        focal_alpha: float = 0.75,
+        focal_gamma: float = 2.0,
+        use_class_balanced_loss: bool = False,
+        class_weights: torch.Tensor = None,
+        use_prototype_diversity: bool = False,
+        diversity_weight: float = 0.1,
+        label_smoothing: float = 0.0
     ):
         self.model = model.to(device)
         self.train_loader = train_loader
@@ -93,11 +107,22 @@ class CSRTrainer:
         self.patience = patience
         self.min_delta = min_delta
         
+        # Advanced loss configurations
+        self.use_focal_loss = use_focal_loss
+        self.focal_alpha = focal_alpha
+        self.focal_gamma = focal_gamma
+        self.use_class_balanced_loss = use_class_balanced_loss
+        self.class_weights = class_weights
+        self.use_prototype_diversity = use_prototype_diversity
+        self.diversity_weight = diversity_weight
+        self.label_smoothing = label_smoothing
+        
     def train_stage_a(
         self,
         epochs: int = 30,
         lr: float = 1e-4,
-        backbone_lr: float = 1e-5
+        backbone_lr: float = 1e-5,
+        concept_loss_weight: float = 1.0
     ) -> Dict[str, float]:
         """
         Stage A: Train concept model (F + C)
@@ -113,8 +138,15 @@ class CSRTrainer:
             {'params': self.model.concept_head.parameters(), 'lr': lr}
         ])
         
-        # Loss function
-        criterion = nn.BCEWithLogitsLoss()
+        # Loss function - Use Focal BCE if requested
+        if self.use_focal_loss:
+            criterion = FocalBCELoss(alpha=self.focal_alpha, gamma=self.focal_gamma)
+            print(f"Using FocalBCELoss (alpha={self.focal_alpha}, gamma={self.focal_gamma})")
+        else:
+            criterion = nn.BCEWithLogitsLoss()
+            print("Using BCEWithLogitsLoss")
+        
+        print(f"Concept loss weight: {concept_loss_weight}")
         
         # Learning rate scheduler
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, epochs)
@@ -142,8 +174,8 @@ class CSRTrainer:
                 outputs = self.model(images, stage='concept')
                 concept_logits = outputs['concept_logits']
                 
-                # Loss
-                loss = criterion(concept_logits, concept_labels)
+                # Loss (weighted)
+                loss = criterion(concept_logits, concept_labels) * concept_loss_weight
                 
                 # Backward
                 loss.backward()
@@ -242,7 +274,8 @@ class CSRTrainer:
         lr: float = 1e-3,
         lambda_temp: float = 20.0,
         gamma: float = 20.0,
-        margin: float = 0.05
+        margin: float = 0.05,
+        diversity_weight: float = 0.1
     ) -> Dict[str, float]:
         """
         Stage B: Learn projector and prototypes with contrastive loss
@@ -277,6 +310,13 @@ class CSRTrainer:
             margin=margin
         )
         
+        # Prototype diversity loss (optional)
+        if self.use_prototype_diversity:
+            diversity_loss = PrototypeDiversityLoss()
+            print(f"Using PrototypeDiversityLoss (weight={diversity_weight})")
+        else:
+            diversity_loss = None
+        
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, epochs)
         
         best_val_loss = float('inf')
@@ -307,6 +347,11 @@ class CSRTrainer:
                 
                 # Compute contrastive loss
                 loss = criterion(v_proj, concept_labels, prototypes)
+                
+                # Add prototype diversity loss
+                if diversity_loss is not None:
+                    div_loss = diversity_loss(prototypes)
+                    loss = loss + diversity_weight * div_loss
                 
                 # Backward
                 loss.backward()
@@ -402,8 +447,33 @@ class CSRTrainer:
                 param.requires_grad = False
             optimizer = optim.AdamW(self.model.task_head.parameters(), lr=lr)
         
-        # Loss function
-        criterion = nn.CrossEntropyLoss()
+        # Loss function - Use Class-Balanced Loss if requested
+        if self.use_class_balanced_loss and self.class_weights is not None:
+            # Use class-balanced cross-entropy
+            num_classes = self.model.num_classes
+            # Calculate class counts from training data
+            class_counts = torch.zeros(num_classes)
+            for batch in self.train_loader:
+                class_labels = batch['class_label']
+                for label in class_labels:
+                    class_counts[label.item()] += 1
+            
+            criterion = ClassBalancedCrossEntropyLoss(
+                class_counts=class_counts.to(self.device),
+                beta=0.9999
+            )
+            print(f"Using ClassBalancedCrossEntropyLoss")
+            print(f"  Class counts: {class_counts.tolist()}")
+        elif self.class_weights is not None:
+            # Use standard cross-entropy with class weights
+            criterion = nn.CrossEntropyLoss(
+                weight=self.class_weights.to(self.device),
+                label_smoothing=self.label_smoothing
+            )
+            print(f"Using CrossEntropyLoss with class weights and label smoothing={self.label_smoothing}")
+        else:
+            criterion = nn.CrossEntropyLoss(label_smoothing=self.label_smoothing)
+            print(f"Using CrossEntropyLoss with label smoothing={self.label_smoothing}")
         
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, epochs)
         
@@ -628,6 +698,31 @@ def main():
     parser.add_argument('--min_delta', type=float, default=0.001,
                         help='Minimum improvement threshold for early stopping')
     
+    # Advanced loss args
+    parser.add_argument('--use_focal_loss', action='store_true',
+                        help='Use Focal BCE Loss for concepts (Stage A)')
+    parser.add_argument('--focal_alpha', type=float, default=0.75,
+                        help='Focal loss alpha parameter')
+    parser.add_argument('--focal_gamma', type=float, default=2.0,
+                        help='Focal loss gamma parameter')
+    parser.add_argument('--concept_loss_weight', type=float, default=1.0,
+                        help='Weight for concept loss in Stage A')
+    
+    parser.add_argument('--use_class_balanced_loss', action='store_true',
+                        help='Use class-balanced cross-entropy for task (Stage C)')
+    parser.add_argument('--use_class_weights', action='store_true',
+                        help='Use class weights in cross-entropy (Stage C)')
+    parser.add_argument('--label_smoothing', type=float, default=0.0,
+                        help='Label smoothing for cross-entropy (0.1 recommended)')
+    
+    parser.add_argument('--use_prototype_diversity', action='store_true',
+                        help='Use prototype diversity loss (Stage B)')
+    parser.add_argument('--diversity_weight', type=float, default=0.1,
+                        help='Weight for prototype diversity loss')
+    
+    parser.add_argument('--use_weighted_sampling', action='store_true',
+                        help='Use weighted random sampling for class balance')
+    
     args = parser.parse_args()
     
     # Create dataloaders
@@ -639,7 +734,8 @@ def main():
         test_file=args.test_file,
         batch_size=args.batch_size,
         num_workers=args.num_workers,
-        input_size=args.input_size
+        input_size=args.input_size,
+        use_weighted_sampling=args.use_weighted_sampling
     )
     
     # Get dataset info
@@ -654,6 +750,16 @@ def main():
         print(f"Early stopping: enabled (patience={args.patience}, min_delta={args.min_delta})")
     else:
         print("Early stopping: disabled")
+    
+    # Calculate class weights if requested
+    class_weights = None
+    if args.use_class_weights:
+        class_labels = [train_loader.dataset[i]['class_label'].item() for i in range(len(train_loader.dataset))]
+        class_counts = torch.bincount(torch.tensor(class_labels))
+        # Inverse frequency weighting
+        class_weights = 1.0 / class_counts.float()
+        class_weights = class_weights / class_weights.sum() * num_classes  # Normalize
+        print(f"Class weights: {class_weights.tolist()}")
     
     # Create model
     model = CSRModel(
@@ -674,7 +780,15 @@ def main():
         save_dir=args.save_dir,
         early_stopping=args.early_stopping,
         patience=args.patience,
-        min_delta=args.min_delta
+        min_delta=args.min_delta,
+        use_focal_loss=args.use_focal_loss,
+        focal_alpha=args.focal_alpha,
+        focal_gamma=args.focal_gamma,
+        use_class_balanced_loss=args.use_class_balanced_loss,
+        class_weights=class_weights,
+        use_prototype_diversity=args.use_prototype_diversity,
+        diversity_weight=args.diversity_weight,
+        label_smoothing=args.label_smoothing
     )
     
     # Resume from checkpoint if specified
@@ -692,8 +806,14 @@ def main():
     if args.start_stage == 'a':
         # Run all three stages
         print("Will run: Stage A → Stage B → Stage C")
-        trainer.train_stage_a(epochs=args.stage_a_epochs)
-        trainer.train_stage_b(epochs=args.stage_b_epochs)
+        trainer.train_stage_a(
+            epochs=args.stage_a_epochs,
+            concept_loss_weight=args.concept_loss_weight
+        )
+        trainer.train_stage_b(
+            epochs=args.stage_b_epochs,
+            diversity_weight=args.diversity_weight
+        )
         trainer.train_stage_c(epochs=args.stage_c_epochs)
         
     elif args.start_stage == 'b':
@@ -713,7 +833,10 @@ def main():
                 )
         
         print("Will run: Stage B → Stage C")
-        trainer.train_stage_b(epochs=args.stage_b_epochs)
+        trainer.train_stage_b(
+            epochs=args.stage_b_epochs,
+            diversity_weight=args.diversity_weight
+        )
         trainer.train_stage_c(epochs=args.stage_c_epochs)
         
     elif args.start_stage == 'c':

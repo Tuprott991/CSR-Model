@@ -1,0 +1,370 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSR Model Evaluation Report</title>
+    <meta charset="utf-8">
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #2c3e50; 
+            border-bottom: 3px solid #3498db; 
+            padding-bottom: 10px;
+        }
+        h2 { 
+            color: #34495e; 
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        h3 { 
+            color: #7f8c8d; 
+            margin-top: 20px;
+        }
+        .metric { 
+            background: #ecf0f1; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 5px;
+            border-left: 4px solid #95a5a6;
+        }
+        .metric.good { border-left-color: #27ae60; }
+        .metric.warning { border-left-color: #f39c12; }
+        .metric.bad { border-left-color: #e74c3c; }
+        
+        .good { color: #27ae60; font-weight: bold; }
+        .bad { color: #e74c3c; font-weight: bold; }
+        .warning { color: #f39c12; font-weight: bold; }
+        
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin: 20px 0;
+            background: white;
+        }
+        th, td { 
+            border: 1px solid #bdc3c7; 
+            padding: 12px; 
+            text-align: left; 
+        }
+        th { 
+            background-color: #3498db; 
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        tr:hover { background-color: #e8f4f8; }
+        
+        .summary-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .summary-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .summary-item.green {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        .summary-item.orange {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .summary-item.red {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .summary-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .summary-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .recommendation {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .recommendation.critical {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 2px;
+        }
+        .badge.success { background: #d4edda; color: #155724; }
+        .badge.warning { background: #fff3cd; color: #856404; }
+        .badge.danger { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 CSR Model Evaluation Report</h1>
+        <p><strong>Generated:</strong> 2025-11-12 17:00:16</p>
+        
+        <!-- Summary Cards -->
+        <div class="summary-box">
+            <div class="summary-item green">
+                <div class="summary-label">Task Accuracy</div>
+                <div class="summary-value">93.2%</div>
+            </div>
+            <div class="summary-item green">
+                <div class="summary-label">Concept Recall</div>
+                <div class="summary-value">86.9%</div>
+            </div>
+            <div class="summary-item orange">
+                <div class="summary-label">Calibration (ECE)</div>
+                <div class="summary-value">0.159</div>
+            </div>
+            <div class="summary-item orange">
+                <div class="summary-label">Misclassified</div>
+                <div class="summary-value">143</div>
+            </div>
+        </div>
+        
+        <!-- Task Performance -->
+        <h2>📊 1. Task Performance (Disease Classification)</h2>
+        <div class="metric good">
+            <p><strong>Accuracy:</strong> <span class="good">0.9315</span></p>
+            <p><strong>Precision:</strong> 0.9700</p>
+            <p><strong>Recall:</strong> 0.9315</p>
+            <p><strong>F1 Score:</strong> 0.9294</p>
+            <p><strong>ROC-AUC:</strong> <span class="good">0.9932</span></p>
+        </div>
+        
+        <h3>Per-Class Performance</h3>
+        <table>
+            <tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1 Score</th><th>Status</th></tr>
+
+            <tr>
+                <td><strong>active_tuberculosis</strong></td>
+                <td>0.8529</td>
+                <td class="bad">0.1768</td>
+                <td>0.2929</td>
+                <td><span class="badge danger">❌ Critical</span></td>
+            </tr>
+
+            <tr>
+                <td><strong>latent_tuberculosis</strong></td>
+                <td>0.2050</td>
+                <td class="good">0.9167</td>
+                <td>0.3350</td>
+                <td><span class="badge success">✅ Good</span></td>
+            </tr>
+
+            <tr>
+                <td><strong>normal</strong></td>
+                <td>0.9947</td>
+                <td class="good">0.9974</td>
+                <td>0.9960</td>
+                <td><span class="badge success">✅ Good</span></td>
+            </tr>
+
+        </table>
+        
+        <!-- Concept Performance -->
+        <h2>🧩 2. Concept Performance</h2>
+        <div class="metric warning">
+            <p><strong>Overall Precision:</strong> <span class="good">0.9140</span></p>
+            <p><strong>Overall Recall:</strong> <span class="warning">0.8686</span></p>
+            <p><strong>Overall F1:</strong> <span class="warning">0.8907</span></p>
+        </div>
+        
+        <h3>Per-Concept Performance</h3>
+        <table>
+            <tr><th>Concept</th><th>Precision</th><th>Recall</th><th>F1</th><th>Status</th></tr>
+
+            <tr>
+                <td>has_active_tb</td>
+                <td>0.7968</td>
+                <td class="warning">0.9085</td>
+                <td>0.8490</td>
+                <td><span class="badge success">✅ Good</span></td>
+            </tr>
+
+            <tr>
+                <td>has_latent_tb</td>
+                <td>0.3846</td>
+                <td class="bad">0.1163</td>
+                <td>0.1786</td>
+                <td><span class="badge danger">❌ Critical</span></td>
+            </tr>
+
+            <tr>
+                <td>has_tb_lesion</td>
+                <td>0.9738</td>
+                <td class="warning">0.9300</td>
+                <td>0.9514</td>
+                <td><span class="badge success">✅ Good</span></td>
+            </tr>
+
+            <tr>
+                <td>lesion_count_low</td>
+                <td>0.9471</td>
+                <td class="warning">0.9227</td>
+                <td>0.9347</td>
+                <td><span class="badge success">✅ Good</span></td>
+            </tr>
+
+            <tr>
+                <td>lesion_count_medium</td>
+                <td>0.0000</td>
+                <td class="bad">0.0000</td>
+                <td>0.0000</td>
+                <td><span class="badge danger">❌ Not Predicted</span></td>
+            </tr>
+
+            <tr>
+                <td>lesion_size_large</td>
+                <td>0.9733</td>
+                <td class="warning">0.9146</td>
+                <td>0.9430</td>
+                <td><span class="badge success">✅ Good</span></td>
+            </tr>
+
+            <tr>
+                <td>lesion_size_medium</td>
+                <td>0.0000</td>
+                <td class="bad">0.0000</td>
+                <td>0.0000</td>
+                <td><span class="badge danger">❌ Not Predicted</span></td>
+            </tr>
+
+        </table>
+        
+        <!-- Misclassification Analysis -->
+        <h2>🔍 3. Misclassification Analysis</h2>
+        <p><strong>Total Misclassified:</strong> 143 samples</p>
+        
+        <h3>Common Patterns:</h3>
+        <table>
+            <tr><th>Pattern</th><th>Count</th><th>Top Missing Concepts</th></tr>
+
+            <tr>
+                <td><code>latent_tuberculosis_to_normal</code></td>
+                <td>1</td>
+                <td>has_latent_tb (1x), has_tb_lesion (1x), lesion_count_low (1x)</td>
+            </tr>
+
+            <tr>
+                <td><code>active_tuberculosis_to_latent_tuberculosis</code></td>
+                <td>126</td>
+                <td>has_active_tb (8x), lesion_count_low (6x), lesion_size_large (6x)</td>
+            </tr>
+
+            <tr>
+                <td><code>active_tuberculosis_to_normal</code></td>
+                <td>9</td>
+                <td>has_active_tb (9x), has_tb_lesion (9x), lesion_count_low (9x)</td>
+            </tr>
+
+            <tr>
+                <td><code>latent_tuberculosis_to_active_tuberculosis</code></td>
+                <td>2</td>
+                <td>has_latent_tb (2x), has_tb_lesion (1x), lesion_count_low (1x)</td>
+            </tr>
+
+            <tr>
+                <td><code>normal_to_active_tuberculosis</code></td>
+                <td>3</td>
+                <td>None</td>
+            </tr>
+
+            <tr>
+                <td><code>normal_to_latent_tuberculosis</code></td>
+                <td>2</td>
+                <td>None</td>
+            </tr>
+
+        </table>
+        
+        <!-- Calibration -->
+        <h2>📈 4. Model Calibration</h2>
+        <div class="metric warning">
+            <p><strong>Expected Calibration Error (ECE):</strong> 0.1586</p>
+            <p><strong>Maximum Calibration Error (MCE):</strong> 0.2785</p>
+            <p><strong>Interpretation:</strong> <span class="warning">Poor</span></p>
+        </div>
+        <p><em>ECE &lt; 0.05 is excellent, 0.05-0.15 is moderate, &gt;0.15 needs recalibration.</em></p>
+        
+        <!-- Recommendations -->
+        <h2>💡 5. Recommendations</h2>
+
+        <div class="recommendation ">
+            <h4>⚠️ Many Prototypes Unused</h4>
+            <p>36/70 prototypes are rarely used.</p>
+            <p><strong>Actions:</strong></p>
+            <ul>
+                <li>Add PrototypeDiversityLoss in Stage B</li>
+                <li>Use PrototypeUsageBalancingLoss during training</li>
+                <li>Consider reducing num_prototypes per concept</li>
+
+            </ul>
+        </div>
+
+        <div class="recommendation ">
+            <h4>⚠️ Poor Calibration</h4>
+            <p>ECE = 0.159. Predicted probabilities don't match actual accuracy.</p>
+            <p><strong>Actions:</strong></p>
+            <ul>
+                <li>Apply temperature scaling on validation set</li>
+                <li>Use label smoothing during training</li>
+                <li>Consider Platt scaling or isotonic regression</li>
+
+            </ul>
+        </div>
+
+        
+        <!-- Next Steps -->
+        <h2>🎯 6. Next Steps</h2>
+        <ol>
+            <li>Review misclassification patterns above and check if concepts are correctly labeled</li>
+            <li>Run threshold optimization: <code>python find_optimal_threshold.py --checkpoint [path]</code></li>
+            <li>If retraining needed, use enhanced losses from <code>losses.py</code></li>
+            <li>Visualize prototypes: <code>python visualize_prototypes.py</code></li>
+            <li>Test model with doctor interaction tool</li>
+        </ol>
+        
+        <hr style="margin: 30px 0;">
+        <p style="text-align: center; color: #7f8c8d;">
+            <em>Generated by CSR Model Evaluation Framework</em>
+        </p>
+    </div>
+</body>
+</html>
