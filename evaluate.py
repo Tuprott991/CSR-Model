@@ -291,9 +291,13 @@ class CSREvaluator:
                 labels = batch['class_label'].to(self.device)
                 concepts_gt = batch['concept_labels'].to(self.device)
                 
-                outputs = self.model(images)
-                preds = outputs['task_logits'].argmax(dim=1)
-                concept_probs = torch.sigmoid(outputs['concept_logits'])
+                # Get task predictions
+                task_outputs = self.model(images, stage='task')
+                preds = task_outputs['task_logits'].argmax(dim=1)
+                
+                # Get concept predictions
+                concept_outputs = self.model(images, stage='concept')
+                concept_probs = torch.sigmoid(concept_outputs['concept_logits'])
                 
                 # Find misclassified samples
                 wrong_mask = (preds != labels)
