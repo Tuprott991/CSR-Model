@@ -32,7 +32,7 @@ class MultiPrototypeContrastiveLoss(nn.Module):
         """
         super().__init__()
         self.lambda_temp = lambda_temp
-        self.gamma = gamma
+        self.gamma = gamma  
         self.margin = margin
     
     def compute_soft_assignment(
