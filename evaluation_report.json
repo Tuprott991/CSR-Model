@@ -39,18 +39,18 @@
     ]
   },
   "concept_performance": {
-    "overall_accuracy": 0.956143951833607,
-    "overall_precision": 1.0,
-    "overall_recall": 0.2057001239157373,
-    "overall_f1": 0.34121274409044194,
+    "overall_accuracy": 0.9692118226600985,
+    "overall_precision": 0.9863760217983651,
+    "overall_recall": 0.4485749690210657,
+    "overall_f1": 0.616695059625213,
     "per_concept": [
       {
         "concept_id": 0,
         "concept_name": "has_active_tb",
-        "accuracy": 0.921455938697318,
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1_score": 0.0
+        "accuracy": 0.928639846743295,
+        "precision": 0.9411764705882353,
+        "recall": 0.0975609756097561,
+        "f1_score": 0.17679558011049723
       },
       {
         "concept_id": 1,
@@ -63,18 +63,18 @@
       {
         "concept_id": 2,
         "concept_name": "has_tb_lesion",
-        "accuracy": 0.9444444444444444,
-        "precision": 1.0,
-        "recall": 0.42,
-        "f1_score": 0.5915492957746479
+        "accuracy": 0.9669540229885057,
+        "precision": 0.9924812030075187,
+        "recall": 0.66,
+        "f1_score": 0.7927927927927928
       },
       {
         "concept_id": 3,
         "concept_name": "lesion_count_low",
-        "accuracy": 0.9075670498084292,
-        "precision": 1.0,
-        "recall": 0.005154639175257732,
-        "f1_score": 0.010256410256410256
+        "accuracy": 0.9444444444444444,
+        "precision": 0.975609756097561,
+        "recall": 0.41237113402061853,
+        "f1_score": 0.5797101449275363
       },
       {
         "concept_id": 4,
@@ -87,10 +87,10 @@
       {
         "concept_id": 5,
         "concept_name": "lesion_size_large",
-        "accuracy": 0.9434865900383141,
-        "precision": 1.0,
-        "recall": 0.40703517587939697,
-        "f1_score": 0.5785714285714286
+        "accuracy": 0.9683908045977011,
+        "precision": 0.9925925925925926,
+        "recall": 0.6733668341708543,
+        "f1_score": 0.8023952095808383
       },
       {
         "concept_id": 6,
@@ -443,10 +443,10 @@
       "f1_score": 0.9663967663238909
     },
     "rejection_30pct": {
-      "accuracy": 0.9267241379310345,
-      "precision": 0.9377980558605824,
-      "recall": 0.9267241379310345,
-      "f1_score": 0.9280663145247083
+      "accuracy": 0.9343869731800766,
+      "precision": 0.944688615403972,
+      "recall": 0.9343869731800766,
+      "f1_score": 0.9346863017656255
     }
   }
 }
