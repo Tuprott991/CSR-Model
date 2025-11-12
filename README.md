@@ -1,6 +1,6 @@
-# CSR: Concept-grounded Self-interpretable Medical Image Analysis
+# CSR: Concept-based similarity reasoning Medical Image Analysis
 
-PyTorch implementation of CSR (Concept-grounded Self-interpretable Reasoning), a framework that learns concept-grounded patch prototypes and classifies medical images by maximum cosine similarity between prototypes and patch features. Prototypes are semantically mapped to human concepts and can be refined by doctors at train/test time.
+PyTorch implementation of CSR (Concept-based similarity reasoning Reasoning), a framework that learns concept-grounded patch prototypes and classifies medical images by maximum cosine similarity between prototypes and patch features. Prototypes are semantically mapped to human concepts and can be refined by doctors at train/test time.
 
 ## Overview
 
@@ -315,7 +315,7 @@ If you use this implementation, please cite the original CSR paper:
 
 ```bibtex
 @inproceedings{csr2024,
-  title={Interactive Medical Image Analysis with Concept-grounded Self-interpretable Reasoning},
+  title={Interactive Medical Image Analysis with Concept-based similarity reasoning Reasoning},
   author={[Authors]},
   booktitle={[Conference/Journal]},
   year={2024}
