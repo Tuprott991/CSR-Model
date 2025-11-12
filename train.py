@@ -482,10 +482,42 @@ class CSRTrainer:
         torch.save(checkpoint, self.save_dir / filename)
     
     def load_checkpoint(self, filename: str):
-        """Load model checkpoint"""
-        checkpoint = torch.load(self.save_dir / filename, map_location=self.device)
+        """
+        Load model checkpoint
+        
+        Args:
+            filename: Path to checkpoint file (can be absolute or relative to save_dir)
+        
+        Returns:
+            checkpoint dict
+        """
+        # Handle both absolute paths and paths relative to save_dir
+        checkpoint_path = Path(filename)
+        if not checkpoint_path.exists():
+            checkpoint_path = self.save_dir / filename
+        
+        if not checkpoint_path.exists():
+            raise FileNotFoundError(f"Checkpoint not found: {filename}")
+        
+        print(f"Loading checkpoint from {checkpoint_path}")
+        checkpoint = torch.load(checkpoint_path, map_location=self.device)
+        
+        # Load model state
         self.model.load_state_dict(checkpoint['model_state_dict'])
-        print(f"Loaded checkpoint from {filename}")
+        
+        # Print which stage was loaded
+        stage = checkpoint.get('stage', 'unknown')
+        epoch = checkpoint.get('epoch', 'unknown')
+        
+        print(f"✓ Loaded checkpoint from Stage {stage.upper()}, Epoch {epoch}")
+        
+        # Print metrics if available
+        if 'val_loss' in checkpoint:
+            print(f"  Val Loss: {checkpoint['val_loss']:.4f}")
+        if 'val_acc' in checkpoint:
+            print(f"  Val Acc: {checkpoint['val_acc']:.2f}%")
+        
+        return checkpoint
 
 
 def main():
@@ -525,11 +557,20 @@ def main():
     parser.add_argument('--stage_b_epochs', type=int, default=20)
     parser.add_argument('--stage_c_epochs', type=int, default=30)
     
+    # Resume training args
     parser.add_argument('--start_stage', type=str, default='a',
                         choices=['a', 'b', 'c'],
-                        help='Start from which stage')
-    parser.add_argument('--load_checkpoint', type=str, default=None,
-                        help='Checkpoint to load before starting')
+                        help='Start from which stage (a=concept, b=prototype, c=task)')
+    parser.add_argument('--resume', type=str, default=None,
+                        help='Path to checkpoint to resume from (e.g., checkpoints/stage_a_best.pth)')
+    
+    # Early stopping args
+    parser.add_argument('--early_stopping', action='store_true',
+                        help='Enable early stopping')
+    parser.add_argument('--patience', type=int, default=10,
+                        help='Early stopping patience (epochs)')
+    parser.add_argument('--min_delta', type=float, default=0.001,
+                        help='Minimum improvement threshold for early stopping')
     
     args = parser.parse_args()
     
@@ -553,6 +594,10 @@ def main():
     print(f"Number of concepts: {num_concepts}")
     print(f"Number of classes: {num_classes}")
     print(f"Training samples: {len(train_loader.dataset)}")
+    if args.early_stopping:
+        print(f"Early stopping: enabled (patience={args.patience}, min_delta={args.min_delta})")
+    else:
+        print("Early stopping: disabled")
     
     # Create model
     model = CSRModel(
@@ -570,36 +615,79 @@ def main():
         train_loader=train_loader,
         val_loader=val_loader,
         device=args.device,
-        save_dir=args.save_dir
+        save_dir=args.save_dir,
+        early_stopping=args.early_stopping,
+        patience=args.patience,
+        min_delta=args.min_delta
     )
     
-    # Load checkpoint if specified
-    if args.load_checkpoint:
-        trainer.load_checkpoint(args.load_checkpoint)
+    # Resume from checkpoint if specified
+    if args.resume:
+        print(f"\n{'='*60}")
+        print(f"Resuming from checkpoint: {args.resume}")
+        print(f"{'='*60}\n")
+        trainer.load_checkpoint(args.resume)
     
-    # Run training stages
+    # Run training stages based on start_stage
+    print(f"\n{'='*60}")
+    print(f"Starting training from stage {args.start_stage.upper()}")
+    print(f"{'='*60}\n")
+    
     if args.start_stage == 'a':
-        print("\nStarting Stage A: Concept Model Training")
+        # Run all three stages
+        print("Will run: Stage A → Stage B → Stage C")
         trainer.train_stage_a(epochs=args.stage_a_epochs)
-        
-        print("\nStarting Stage B: Prototype Learning")
         trainer.train_stage_b(epochs=args.stage_b_epochs)
-        
-        print("\nStarting Stage C: Task Head Training")
         trainer.train_stage_c(epochs=args.stage_c_epochs)
-    
+        
     elif args.start_stage == 'b':
-        print("\nStarting Stage B: Prototype Learning")
-        trainer.train_stage_b(epochs=args.stage_b_epochs)
+        # Start from stage B (requires stage A checkpoint)
+        if not args.resume:
+            # Try to auto-load stage_a_best.pth
+            stage_a_checkpoint = Path(args.save_dir) / 'stage_a_best.pth'
+            if stage_a_checkpoint.exists():
+                print(f"Auto-loading Stage A checkpoint: {stage_a_checkpoint}")
+                trainer.load_checkpoint(str(stage_a_checkpoint))
+            else:
+                raise ValueError(
+                    "Starting from stage B requires Stage A checkpoint. "
+                    "Either:\n"
+                    f"  1. Train Stage A first, or\n"
+                    f"  2. Provide --resume path to stage_a_*.pth checkpoint"
+                )
         
-        print("\nStarting Stage C: Task Head Training")
+        print("Will run: Stage B → Stage C")
+        trainer.train_stage_b(epochs=args.stage_b_epochs)
         trainer.train_stage_c(epochs=args.stage_c_epochs)
-    
+        
     elif args.start_stage == 'c':
-        print("\nStarting Stage C: Task Head Training")
+        # Start from stage C (requires stage B checkpoint)
+        if not args.resume:
+            # Try to auto-load stage_b_best.pth
+            stage_b_checkpoint = Path(args.save_dir) / 'stage_b_best.pth'
+            if stage_b_checkpoint.exists():
+                print(f"Auto-loading Stage B checkpoint: {stage_b_checkpoint}")
+                trainer.load_checkpoint(str(stage_b_checkpoint))
+            else:
+                raise ValueError(
+                    "Starting from stage C requires Stage B checkpoint. "
+                    "Either:\n"
+                    f"  1. Train Stage A and B first, or\n"
+                    f"  2. Provide --resume path to stage_b_*.pth checkpoint"
+                )
+        
+        print("Will run: Stage C only")
         trainer.train_stage_c(epochs=args.stage_c_epochs)
     
-    print("\nTraining completed!")
+    print("\n" + "="*60)
+    print("Training completed!")
+    print("="*60)
+    print(f"\nCheckpoints saved in: {args.save_dir}")
+    print("Available checkpoints:")
+    checkpoint_dir = Path(args.save_dir)
+    if checkpoint_dir.exists():
+        for ckpt in sorted(checkpoint_dir.glob("*.pth")):
+            print(f"  - {ckpt.name}")
 
 
 if __name__ == '__main__':
