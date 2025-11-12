@@ -203,17 +203,10 @@ def convert_tbx11k_to_csr_format(
             'disease': disease
         }
     
-    # Prepare final output with metadata
-    output_data = {
-        'concepts': concept_columns,
-        'classes': ['normal', 'active_tuberculosis', 'latent_tuberculosis', 'uncertain_tuberculosis', 'tuberculosis'],
-        'annotations': annotations
-    }
-    
-    # Save to JSON
+    # Save to JSON (without metadata - dataloader will extract concepts automatically)
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, 'w') as f:
-        json.dump(output_data, f, indent=2)
+        json.dump(annotations, f, indent=2)
     
     print(f"Saved {len(annotations)} annotations to {output_path}")
     
